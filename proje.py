@@ -122,6 +122,26 @@ def xor_islemi(metin, anahtar):
         
     return sonuc
 
+def atbash_sifrele(metin: str) -> str:
+    """Her harfi alfabenin ayna karakteriyle değiştirir (A↔Z, B↔Y …).
+    Atbash kendi tersidir; şifreleme = deşifreleme."""
+    sonuc = []
+    for karakter in metin:
+        if karakter.isalpha():
+            if karakter.isupper():
+                yeni_harf = chr(ord('Z') - (ord(karakter) - ord('A')))
+            else:
+                yeni_harf = chr(ord('z') - (ord(karakter) - ord('a')))
+            sonuc.append(yeni_harf)
+        else:
+            sonuc.append(karakter)
+    return "".join(sonuc)
+
+
+def atbash_desifrele(sifreli: str) -> str:
+    """Atbash simetriktir; aynı fonksiyon deşifre için de kullanılır."""
+    return atbash_sifrele(sifreli)
+
 
 
 
@@ -155,3 +175,4 @@ elif secim == "3":  # Senin mevcut XOR akışın
         print("Cozulmus Metin :", cozulmus_sonuc)
     else:
         print("\nHATALI SIFRE! Erisim reddedildi.")
+
