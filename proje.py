@@ -1,5 +1,63 @@
-
 import os
+
+
+TURKISH_ALPHABET = "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ"
+ALPHABET_LEN = len(TURKISH_ALPHABET)
+
+def _clean_key_tr(key: str) -> str:
+    key = key.upper()
+    cleaned = "".join(ch for ch in key if ch in TURKISH_ALPHABET)
+    if not cleaned:
+        raise ValueError("Anahtar Türk alfabesinden en az bir harf içermeli.")
+    return cleaned
+
+def vigenere_encrypt_tr(text: str, key: str) -> str:
+    key = _clean_key_tr(key)
+    result = []
+    key_index = 0
+
+    for ch in text:
+        upper_ch = ch.upper()
+        if upper_ch in TURKISH_ALPHABET:
+            p = TURKISH_ALPHABET.index(upper_ch)
+            k = TURKISH_ALPHABET.index(key[key_index % len(key)])
+            c = (p + k) % ALPHABET_LEN
+
+            enc = TURKISH_ALPHABET[c]
+            if ch.islower():
+                enc = enc.lower()
+
+            result.append(enc)
+            key_index += 1
+        else:
+            result.append(ch)
+
+    return "".join(result)
+
+def vigenere_decrypt_tr(text: str, key: str) -> str:
+    key = _clean_key_tr(key)
+    result = []
+    key_index = 0
+
+    for ch in text:
+        upper_ch = ch.upper()
+        if upper_ch in TURKISH_ALPHABET:
+            c = TURKISH_ALPHABET.index(upper_ch)
+            k = TURKISH_ALPHABET.index(key[key_index % len(key)])
+            p = (c - k) % ALPHABET_LEN
+
+            dec = TURKISH_ALPHABET[p]
+            if ch.islower():
+                dec = dec.lower()
+
+            result.append(dec)
+            key_index += 1
+        else:
+            result.append(ch)
+
+    return "".join(result)
+
+
 
 def title():
     print("=" * 55)
@@ -30,7 +88,8 @@ def islem_sec() -> str:
     tercih = input("Seçiminiz (1-2): ").strip()
     return tercih
     
-def sezar_sifre(metin: str, kaydirma: int) -> str
+
+def sezar_sifre(metin: str, kaydirma: int) -> str:
     sonuc = []
     for karakter in metin:
         if karakter.isalpha():
@@ -43,7 +102,7 @@ def sezar_sifre(metin: str, kaydirma: int) -> str
 
 
 def sezar_desifre(sifreli: str, kaydirma: int) -> str:
-    return caesar_sifrele(sifreli, -kaydirma)
+    return sezar_sifre(sifreli, -kaydirma)
 
 
 
@@ -63,19 +122,36 @@ def xor_islemi(metin, anahtar):
         
     return sonuc
 
-print("MESAJ SIFRELEYICIYE HOS GELDINIZ ")
 
-girilen_metin = input("Lutfen sifrelemek istediginiz metni yazin: ")
-anahtar = input("Gizli anahtar kelimenizi belirleyin: ")
 
-sifreli_sonuc = xor_islemi(girilen_metin, anahtar)
 
-print("Sifreli metin:", repr(sifreli_sonuc)) 
+title()
+secim = algoritma_sec()
 
-cozum_anahtari = input("Sİfreyi cozmek için anahtar kelimeyi girin: ")
+if secim == "2":   
+    mesaj = input("Lütfen metni girin: ")
+    anahtar = input("Anahtar kelimeyi girin: ")
+    islem = islem_sec()
 
-if cozum_anahtari == anahtar:
-    cozulmus_sonuc = xor_islemi(sifreli_sonuc, cozum_anahtari)
-    print("Cozulmus Metin :", cozulmus_sonuc)
-else:
-    print("\nHATALI SIFRE! Erisim reddedildi.")
+    if islem == "1":
+        print("Şifreli metin:", vigenere_encrypt_tr(mesaj, anahtar))
+    else:
+        print("Çözülmüş metin:", vigenere_decrypt_tr(mesaj, anahtar))
+
+elif secim == "3":  # Senin mevcut XOR akışın
+    print("MESAJ SIFRELEYICIYE HOS GELDINIZ ")
+
+    girilen_metin = input("Lutfen sifrelemek istediginiz metni yazin: ")
+    anahtar = input("Gizli anahtar kelimenizi belirleyin: ")
+
+    sifreli_sonuc = xor_islemi(girilen_metin, anahtar)
+
+    print("Sifreli metin:", repr(sifreli_sonuc)) 
+
+    cozum_anahtari = input("Sİfreyi cozmek için anahtar kelimeyi girin: ")
+
+    if cozum_anahtari == anahtar:
+        cozulmus_sonuc = xor_islemi(sifreli_sonuc, cozum_anahtari)
+        print("Cozulmus Metin :", cozulmus_sonuc)
+    else:
+        print("\nHATALI SIFRE! Erisim reddedildi.")
