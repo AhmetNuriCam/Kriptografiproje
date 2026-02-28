@@ -47,3 +47,35 @@ def sezar_desifre(sifreli: str, kaydirma: int) -> str:
 
 
 
+def xor_islemi(metin, anahtar):
+    sonuc = ""
+    anahtar_uzunluk = len(anahtar)
+    
+    if anahtar_uzunluk == 0:
+        return metin
+        
+    for i in range(len(metin)):
+        metin_karakteri = metin[i]
+        anahtar_karakteri = anahtar[i % anahtar_uzunluk]
+        
+        xor_degeri = ord(metin_karakteri) ^ ord(anahtar_karakteri)
+        sonuc += chr(xor_degeri)
+        
+    return sonuc
+
+print("MESAJ SIFRELEYICIYE HOS GELDINIZ ")
+
+girilen_metin = input("Lutfen sifrelemek istediginiz metni yazin: ")
+anahtar = input("Gizli anahtar kelimenizi belirleyin: ")
+
+sifreli_sonuc = xor_islemi(girilen_metin, anahtar)
+
+print("Sifreli metin:", repr(sifreli_sonuc)) 
+
+cozum_anahtari = input("Sİfreyi cozmek için anahtar kelimeyi girin: ")
+
+if cozum_anahtari == anahtar:
+    cozulmus_sonuc = xor_islemi(sifreli_sonuc, cozum_anahtari)
+    print("Cozulmus Metin :", cozulmus_sonuc)
+else:
+    print("\nHATALI SIFRE! Erisim reddedildi.")
