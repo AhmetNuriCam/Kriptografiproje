@@ -1,6 +1,7 @@
 
 import os
 
+
 def caesar_sifrele(metin: str, kaydirma: int) -> str:
     sonuc = []
     for karakter in metin:
@@ -15,6 +16,8 @@ def caesar_sifrele(metin: str, kaydirma: int) -> str:
 
 def caesar_desifrele(sifreli: str, kaydirma: int) -> str:
     return caesar_sifrele(sifreli, -kaydirma)
+
+
 
 
 TURKCE_ALFABE = "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ"
@@ -88,7 +91,6 @@ def xor_desifrele(sifreli, anahtar):
 
 
 def atbash_sifrele(metin: str) -> str:
-
     sonuc = []
     for karakter in metin:
         if karakter.isalpha():
@@ -103,8 +105,8 @@ def atbash_sifrele(metin: str) -> str:
 
 
 def atbash_desifrele(sifreli: str) -> str:
-    """Atbash simetriktir; aynı fonksiyon deşifre için de kullanılır."""
     return atbash_sifrele(sifreli)
+
 
 
 def ekran_temizle():
@@ -157,7 +159,6 @@ def ana_menu():
         elif secim == "1":
             ekran_temizle()
             baslik_yazdir()
-
             dosya_yolu = input("\nDosya yolunu girin (.txt): ").strip()
             if not os.path.isfile(dosya_yolu):
                 input("Dosya bulunamadı. Entera basın.")
@@ -172,7 +173,7 @@ def ana_menu():
                 except Exception:
                     continue
             if not metin:
-                input("[] Dosya boş veya okunamadı. Entera basın.")
+                input("Dosya boş veya okunamadı. Entera basın.")
                 continue
             print(f"Dosya okundu: {dosya_yolu} ({len(metin)} karakter)")
 
@@ -185,7 +186,7 @@ def ana_menu():
                 try:
                     kaydirma = int(input("Kaydırma değeri (tam sayı): "))
                 except ValueError:
-                    input("[HATA] Tam sayı giriniz. Devam için Enter'a basın.")
+                    input("Tam sayı giriniz. Devam için Entera basın.")
                     continue
 
                 if islem == "1":
@@ -193,21 +194,21 @@ def ana_menu():
                 elif islem == "2":
                     sonuc = caesar_desifrele(metin, kaydirma)
 
-                elif algoritma == "2":
-                    anahtar = input("Anahtar kelime (Türkçe harf): ").strip()
+            elif algoritma == "2":
+                anahtar = input("Anahtar kelime (Türkçe harf): ").strip()
                 try:
                     if islem == "1":
                         sonuc = vigenere_sifrele(metin, anahtar)
                     elif islem == "2":
                         sonuc = vigenere_desifrele(metin, anahtar)
                 except ValueError as hata:
-                    input(f"[HATA] {hata} Enter'a basın.")
+                    input(f"{hata} Enter'a basın.")
                     continue
 
             elif algoritma == "3":
                 anahtar = input("Anahtar kelime: ").strip()
                 if not anahtar:
-                    input("[HATA] Anahtar boş olamaz. Enter'a basın.")
+                    input("Anahtar boş olamaz. Enter'a basın.")
                     continue
 
                 if islem == "1":
@@ -222,7 +223,7 @@ def ana_menu():
                     sonuc = atbash_desifrele(metin)
 
             else:
-                input("[HATA] Geçersiz algoritma seçimi. Enter'a basın.")
+                input("Geçersiz algoritma seçimi. Enter'a basın.")
                 continue
 
             if sonuc is not None:
@@ -241,8 +242,9 @@ def ana_menu():
             input("\nAna menüye dönmek için Entera basın.")
 
         else:
-            input("Geçersiz seçim. Devam için Entera basın.")
+            input("Geçersiz seçim. Devam için Enter'a basın.")
+
+
 
 if __name__ == "__main__":
     ana_menu()
-
