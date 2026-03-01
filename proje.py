@@ -194,7 +194,7 @@ def ana_menu():
                     sonuc = caesar_desifrele(metin, kaydirma)
 
                 elif algoritma == "2":
-                anahtar = input("Anahtar kelime (Türkçe harf): ").strip()
+                    anahtar = input("Anahtar kelime (Türkçe harf): ").strip()
                 try:
                     if islem == "1":
                         sonuc = vigenere_sifrele(metin, anahtar)
@@ -245,3 +245,4 @@ def ana_menu():
 
 if __name__ == "__main__":
     ana_menu()
+
