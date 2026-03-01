@@ -1,65 +1,117 @@
+
 import os
 
-
-TURKISH_ALPHABET = "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ"
-ALPHABET_LEN = len(TURKISH_ALPHABET)
-
-def _clean_key_tr(key: str) -> str:
-    key = key.upper()
-    cleaned = "".join(ch for ch in key if ch in TURKISH_ALPHABET)
-    if not cleaned:
-        raise ValueError("Anahtar Türk alfabesinden en az bir harf içermeli.")
-    return cleaned
-
-def vigenere_encrypt_tr(text: str, key: str) -> str:
-    key = _clean_key_tr(key)
-    result = []
-    key_index = 0
-
-    for ch in text:
-        upper_ch = ch.upper()
-        if upper_ch in TURKISH_ALPHABET:
-            p = TURKISH_ALPHABET.index(upper_ch)
-            k = TURKISH_ALPHABET.index(key[key_index % len(key)])
-            c = (p + k) % ALPHABET_LEN
-
-            enc = TURKISH_ALPHABET[c]
-            if ch.islower():
-                enc = enc.lower()
-
-            result.append(enc)
-            key_index += 1
+def caesar_sifrele(metin: str, kaydirma: int) -> str:
+    sonuc = []
+    for karakter in metin:
+        if karakter.isalpha():
+            baslangic = ord('A') if karakter.isupper() else ord('a')
+            yeni_harf = chr((ord(karakter) - baslangic + kaydirma) % 26 + baslangic)
+            sonuc.append(yeni_harf)
         else:
-            result.append(ch)
+            sonuc.append(karakter)   
+    return "".join(sonuc)
 
-    return "".join(result)
 
-def vigenere_decrypt_tr(text: str, key: str) -> str:
-    key = _clean_key_tr(key)
-    result = []
-    key_index = 0
+def caesar_desifrele(sifreli: str, kaydirma: int) -> str:
+    return caesar_sifrele(sifreli, -kaydirma)
 
-    for ch in text:
-        upper_ch = ch.upper()
-        if upper_ch in TURKISH_ALPHABET:
-            c = TURKISH_ALPHABET.index(upper_ch)
-            k = TURKISH_ALPHABET.index(key[key_index % len(key)])
-            p = (c - k) % ALPHABET_LEN
 
-            dec = TURKISH_ALPHABET[p]
-            if ch.islower():
-                dec = dec.lower()
+TURKCE_ALFABE = "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ"
+ALFABE_UZUNLUGU = len(TURKCE_ALFABE)  
 
-            result.append(dec)
-            key_index += 1
+def anahtar_temizle(anahtar: str) -> str:
+    anahtar = anahtar.upper()
+    temiz = "".join(harf for harf in anahtar if harf in TURKCE_ALFABE)
+    if not temiz:
+        raise ValueError("Anahtar Türkçe alfabesinden en az bir harf içermeli.")
+    return temiz
+
+
+def vigenere_sifrele(metin: str, anahtar: str) -> str:
+    anahtar = anahtar_temizle(anahtar)
+    sonuc = []
+    anahtar_indeks = 0
+
+    for karakter in metin:
+        buyuk_karakter = karakter.upper()
+        if buyuk_karakter in TURKCE_ALFABE:
+            p = TURKCE_ALFABE.index(buyuk_karakter)
+            k = TURKCE_ALFABE.index(anahtar[anahtar_indeks % len(anahtar)])
+            sifrelenmis_harf = TURKCE_ALFABE[(p + k) % ALFABE_UZUNLUGU]
+            if karakter.islower():
+                sifrelenmis_harf = sifrelenmis_harf.lower()
+            sonuc.append(sifrelenmis_harf)
+            anahtar_indeks += 1
         else:
-            result.append(ch)
+            sonuc.append(karakter)   
 
-    return "".join(result)
+    return "".join(sonuc)
 
 
+def vigenere_desifrele(sifreli: str, anahtar: str) -> str:
+    anahtar = anahtar_temizle(anahtar)
+    sonuc = []
+    anahtar_indeks = 0
 
-def title():
+    for karakter in sifreli:
+        buyuk_karakter = karakter.upper()
+        if buyuk_karakter in TURKCE_ALFABE:
+            c = TURKCE_ALFABE.index(buyuk_karakter)
+            k = TURKCE_ALFABE.index(anahtar[anahtar_indeks % len(anahtar)])
+            orijinal_harf = TURKCE_ALFABE[(c - k) % ALFABE_UZUNLUGU]
+            if karakter.islower():
+                orijinal_harf = orijinal_harf.lower()
+            sonuc.append(orijinal_harf)
+            anahtar_indeks += 1
+        else:
+            sonuc.append(karakter)
+
+    return "".join(sonuc)
+
+
+def xor_sifrele(metin, anahtar):
+    sonuc = []
+    for i in range(len(metin)):
+        xor_degeri = ord(metin[i]) ^ ord(anahtar[i % len(anahtar)])
+        sonuc.append(str(xor_degeri))
+    return ",".join(sonuc)
+
+
+def xor_desifrele(sifreli, anahtar):
+    sonuc = ""
+    sayilar = sifreli.split(",")
+    for i in range(len(sayilar)):
+        orijinal = int(sayilar[i]) ^ ord(anahtar[i % len(anahtar)])
+        sonuc += chr(orijinal)
+    return sonuc
+
+
+def atbash_sifrele(metin: str) -> str:
+
+    sonuc = []
+    for karakter in metin:
+        if karakter.isalpha():
+            if karakter.isupper():
+                yeni_harf = chr(ord('Z') - (ord(karakter) - ord('A')))
+            else:
+                yeni_harf = chr(ord('z') - (ord(karakter) - ord('a')))
+            sonuc.append(yeni_harf)
+        else:
+            sonuc.append(karakter)
+    return "".join(sonuc)
+
+
+def atbash_desifrele(sifreli: str) -> str:
+    """Atbash simetriktir; aynı fonksiyon deşifre için de kullanılır."""
+    return atbash_sifrele(sifreli)
+
+
+def ekran_temizle():
+    os.system('cls' if os.name == 'nt' else 'clear')
+
+
+def baslik_yazdir():
     print("=" * 55)
     print("   ŞİFRELEME / DEŞİFRELEME UYGULAMASI")
     print("=" * 55)
@@ -87,92 +139,109 @@ def islem_sec() -> str:
     print("  [2] Deşifrele")
     tercih = input("Seçiminiz (1-2): ").strip()
     return tercih
-    
-
-def sezar_sifre(metin: str, kaydirma: int) -> str:
-    sonuc = []
-    for karakter in metin:
-        if karakter.isalpha():
-            baslangic = ord('A') if karakter.isupper() else ord('a')
-            yeni_harf = chr((ord(karakter) - baslangic + kaydirma) % 26 + baslangic)
-            sonuc.append(yeni_harf)
-        else:
-            sonuc.append(karakter)   
-    return "".join(sonuc)
 
 
-def sezar_desifre(sifreli: str, kaydirma: int) -> str:
-    return sezar_sifre(sifreli, -kaydirma)
+def ana_menu():
+    while True:
+        ekran_temizle()
+        baslik_yazdir()
 
+        print("\n  [1] Şifreleme / Deşifreleme Yap")
+        print("  [0] Çıkış")
+        secim = input("\nSeçiminiz: ").strip()
 
+        if secim == "0":
+            print("\nUygulama kapatıldı.")
+            break
 
-def xor_islemi(metin, anahtar):
-    sonuc = ""
-    anahtar_uzunluk = len(anahtar)
-    
-    if anahtar_uzunluk == 0:
-        return metin
-        
-    for i in range(len(metin)):
-        metin_karakteri = metin[i]
-        anahtar_karakteri = anahtar[i % anahtar_uzunluk]
-        
-        xor_degeri = ord(metin_karakteri) ^ ord(anahtar_karakteri)
-        sonuc += chr(xor_degeri)
-        
-    return sonuc
+        elif secim == "1":
+            ekran_temizle()
+            baslik_yazdir()
 
-def atbash_sifrele(metin: str) -> str:
-    """Her harfi alfabenin ayna karakteriyle değiştirir (A↔Z, B↔Y …).
-    Atbash kendi tersidir; şifreleme = deşifreleme."""
-    sonuc = []
-    for karakter in metin:
-        if karakter.isalpha():
-            if karakter.isupper():
-                yeni_harf = chr(ord('Z') - (ord(karakter) - ord('A')))
+            dosya_yolu = input("\nDosya yolunu girin (.txt): ").strip()
+            if not os.path.isfile(dosya_yolu):
+                input("Dosya bulunamadı. Entera basın.")
+                continue
+            metin = None
+            for enc in ["utf-8", "utf-8-sig", "utf-16", "cp1254", "latin-1"]:
+                try:
+                    with open(dosya_yolu, "r", encoding=enc) as f:
+                        metin = f.read()
+                    if metin:
+                        break
+                except Exception:
+                    continue
+            if not metin:
+                input("[] Dosya boş veya okunamadı. Entera basın.")
+                continue
+            print(f"Dosya okundu: {dosya_yolu} ({len(metin)} karakter)")
+
+            algoritma = algoritma_sec()
+            islem    = islem_sec()
+
+            sonuc = None
+
+            if algoritma == "1":
+                try:
+                    kaydirma = int(input("Kaydırma değeri (tam sayı): "))
+                except ValueError:
+                    input("[HATA] Tam sayı giriniz. Devam için Enter'a basın.")
+                    continue
+
+                if islem == "1":
+                    sonuc = caesar_sifrele(metin, kaydirma)
+                elif islem == "2":
+                    sonuc = caesar_desifrele(metin, kaydirma)
+
+                elif algoritma == "2":
+                anahtar = input("Anahtar kelime (Türkçe harf): ").strip()
+                try:
+                    if islem == "1":
+                        sonuc = vigenere_sifrele(metin, anahtar)
+                    elif islem == "2":
+                        sonuc = vigenere_desifrele(metin, anahtar)
+                except ValueError as hata:
+                    input(f"[HATA] {hata} Enter'a basın.")
+                    continue
+
+            elif algoritma == "3":
+                anahtar = input("Anahtar kelime: ").strip()
+                if not anahtar:
+                    input("[HATA] Anahtar boş olamaz. Enter'a basın.")
+                    continue
+
+                if islem == "1":
+                    sonuc = xor_sifrele(metin, anahtar)
+                elif islem == "2":
+                    sonuc = xor_desifrele(metin, anahtar)
+
+            elif algoritma == "4":
+                if islem == "1":
+                    sonuc = atbash_sifrele(metin)
+                elif islem == "2":
+                    sonuc = atbash_desifrele(metin)
+
             else:
-                yeni_harf = chr(ord('z') - (ord(karakter) - ord('a')))
-            sonuc.append(yeni_harf)
+                input("[HATA] Geçersiz algoritma seçimi. Enter'a basın.")
+                continue
+
+            if sonuc is not None:
+                islem_adi = "sifreli" if islem == "1" else "desifreli"
+                dosya_adi = os.path.splitext(dosya_yolu)[0]
+                cikti_yolu = f"{dosya_adi}_{islem_adi}.txt"
+                with open(cikti_yolu, "w", encoding="utf-8") as f:
+                    f.write(sonuc)
+                print("\n" + "─" * 55)
+                print(f"  İşlem tamamlandı!")
+                print(f"  Çıktı dosyası: {cikti_yolu}")
+                print("─" * 55)
+            else:
+                print("Geçersiz işlem seçimi.")
+
+            input("\nAna menüye dönmek için Entera basın.")
+
         else:
-            sonuc.append(karakter)
-    return "".join(sonuc)
+            input("Geçersiz seçim. Devam için Entera basın.")
 
-
-def atbash_desifrele(sifreli: str) -> str:
-    """Atbash simetriktir; aynı fonksiyon deşifre için de kullanılır."""
-    return atbash_sifrele(sifreli)
-
-
-
-
-title()
-secim = algoritma_sec()
-
-if secim == "2":   
-    mesaj = input("Lütfen metni girin: ")
-    anahtar = input("Anahtar kelimeyi girin: ")
-    islem = islem_sec()
-
-    if islem == "1":
-        print("Şifreli metin:", vigenere_encrypt_tr(mesaj, anahtar))
-    else:
-        print("Çözülmüş metin:", vigenere_decrypt_tr(mesaj, anahtar))
-
-elif secim == "3":  # Senin mevcut XOR akışın
-    print("MESAJ SIFRELEYICIYE HOS GELDINIZ ")
-
-    girilen_metin = input("Lutfen sifrelemek istediginiz metni yazin: ")
-    anahtar = input("Gizli anahtar kelimenizi belirleyin: ")
-
-    sifreli_sonuc = xor_islemi(girilen_metin, anahtar)
-
-    print("Sifreli metin:", repr(sifreli_sonuc)) 
-
-    cozum_anahtari = input("Sİfreyi cozmek için anahtar kelimeyi girin: ")
-
-    if cozum_anahtari == anahtar:
-        cozulmus_sonuc = xor_islemi(sifreli_sonuc, cozum_anahtari)
-        print("Cozulmus Metin :", cozulmus_sonuc)
-    else:
-        print("\nHATALI SIFRE! Erisim reddedildi.")
-
+if __name__ == "__main__":
+    ana_menu()
